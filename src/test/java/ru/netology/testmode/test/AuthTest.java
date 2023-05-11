@@ -1,11 +1,9 @@
 package ru.netology.testmode.test;
 
 import com.codeborne.selenide.Condition;
-//import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.netology.testmode.data.DataToConsole;
 import ru.netology.testmode.data.Login;
 
 import java.time.Duration;
@@ -95,7 +93,6 @@ class AuthTest {
         $("[data-test-id='error-notification']")
                 .shouldHave(Condition.text("Неверно указан логин или пароль"), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
-        DataToConsole.printToConsole("Использованный в тесте логин: " + wrongLogin);
     }
 
     @Test
@@ -120,6 +117,5 @@ class AuthTest {
         $("[data-test-id='error-notification']")
                 .shouldHave(Condition.text("Неверно указан логин или пароль"), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
-        DataToConsole.printToConsole("Использованный в тесте пароль: " + wrongPassword);
     }
 }

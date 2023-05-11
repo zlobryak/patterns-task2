@@ -95,8 +95,7 @@ public class DataGenerator {
                         boolean includeSpecial,
                         boolean includeDigit
                 ) {
-            // TODO: Послать запрос на регистрацию пользователя с
-            //  помощью вызова sendRequest(registeredUser)
+
             RegistrationDto registeredUser = getUser
                     (
                             status,

@@ -17,6 +17,7 @@ public class Login {
         } else {
             $("[data-test-id=login] input")
                     .sendKeys(login);
+            DataToConsole.printToConsole("Использованный в тесте логин: " + login);
         }
         if (Objects.equals(password, "fromUser")) {
             $("[data-test-id=password] input")
@@ -24,6 +25,7 @@ public class Login {
         } else {
             $("[data-test-id=password] input")
                     .sendKeys(password);
+            DataToConsole.printToConsole("Использованный в тесте пароль: " + password);
         }
         $("[data-test-id='action-login']")
                 .click();
