@@ -1,27 +1,23 @@
 package ru.netology.testmode.test;
 
-import com.codeborne.selenide.Configuration;
-import com.diogonunes.jcolor.AnsiFormat;
-import com.diogonunes.jcolor.Attribute;
+import com.codeborne.selenide.Condition;
+//import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.netology.testmode.data.DataToConsole;
+import ru.netology.testmode.data.Login;
 
+import java.time.Duration;
+
+import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
-import static com.diogonunes.jcolor.Ansi.colorize;
-import static com.diogonunes.jcolor.Attribute.*;
 import static ru.netology.testmode.data.DataGenerator.Registration.getRegisteredUser;
 import static ru.netology.testmode.data.DataGenerator.Registration.getUser;
 import static ru.netology.testmode.data.DataGenerator.getRandomLogin;
 import static ru.netology.testmode.data.DataGenerator.getRandomPassword;
 
 class AuthTest {
-    AnsiFormat greenText = new AnsiFormat
-            (
-                    Attribute.GREEN_TEXT(),
-                    BLACK_BACK(),
-                    BOLD()
-            );
 
     @BeforeEach
     void setup() {
@@ -31,7 +27,6 @@ class AuthTest {
     @Test
     @DisplayName("Should successfully login with active registered user")
     void shouldSuccessfulLoginIfRegisteredActiveUser() {
-        Configuration.holdBrowserOpen = true;
         var registeredUser = getRegisteredUser
                 (
                         "active",
@@ -41,19 +36,15 @@ class AuthTest {
                         true,
                         true
                 );
-        // TODO: добавить логику теста, в рамках которого будет выполнена попытка входа в личный кабинет с учётными
-        //  данными зарегистрированного активного пользователя, для заполнения полей формы используйте
-        //  пользователя registeredUser
-        System.out.println(colorize("Used user parameters: "
-                + registeredUser.getLogin()
-                + " "
-                + registeredUser.getPassword(),
-                greenText));
+        Login.login(registeredUser, "fromUser", "fromUser");
+        $("h2").shouldHave(Condition.text("Личный кабинет"), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
     }
 
     @Test
     @DisplayName("Should get error message if login with not registered user")
     void shouldGetErrorIfNotRegisteredUser() {
+
         var notRegisteredUser = getUser(
                 "active",
                 6,
@@ -61,8 +52,11 @@ class AuthTest {
                 true,
                 true,
                 true);
-        // TODO: добавить логику теста в рамках которого будет выполнена попытка входа в личный кабинет
-        //  незарегистрированного пользователя, для заполнения полей формы используйте пользователя notRegisteredUser
+        Login.login(notRegisteredUser, "fromUser", "fromUser");
+        $("[data-test-id='error-notification']")
+                .shouldHave(Condition.text("Неверно указан логин или пароль"), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+
     }
 
     @Test
@@ -77,13 +71,16 @@ class AuthTest {
                         true,
                         true
                 );
-        // TODO: добавить логику теста в рамках которого будет выполнена попытка входа в личный кабинет,
-        //  заблокированного пользователя, для заполнения полей формы используйте пользователя blockedUser
-    }
+        Login.login(blockedUser, "fromUser", "fromUser");
+        $("[data-test-id='error-notification']")
+                .shouldHave(Condition.text("Пользователь заблокирован"), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
 
+    }
     @Test
     @DisplayName("Should get error message if login with wrong login")
     void shouldGetErrorIfWrongLogin() {
+//        Configuration.holdBrowserOpen = true;
         var registeredUser = getRegisteredUser
                 (
                         "active",
@@ -93,11 +90,12 @@ class AuthTest {
                         true,
                         true
                 );
-        var wrongLogin = getRandomLogin();
-        // TODO: добавить логику теста в рамках которого будет выполнена попытка
-        //  входа в личный кабинет с неверным
-        //  логином, для заполнения поля формы "Логин" используйте переменную wrongLogin,
-        //  "Пароль" - пользователя registeredUser
+        String wrongLogin = getRandomLogin();
+        Login.login(registeredUser, wrongLogin, "fromUser");
+        $("[data-test-id='error-notification']")
+                .shouldHave(Condition.text("Неверно указан логин или пароль"), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+        DataToConsole.printToConsole("Использованный в тесте логин: " + wrongLogin);
     }
 
     @Test
@@ -118,8 +116,10 @@ class AuthTest {
                 true,
                 true,
                 true);
-        // TODO: добавить логику теста в рамках которого будет выполнена попытка входа в личный кабинет с неверным
-        //  паролем, для заполнения поля формы "Логин" используйте пользователя registeredUser,
-        //  "Пароль" - переменную wrongPassword
+        Login.login(registeredUser, "fromUser", wrongPassword);
+        $("[data-test-id='error-notification']")
+                .shouldHave(Condition.text("Неверно указан логин или пароль"), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+        DataToConsole.printToConsole("Использованный в тесте пароль: " + wrongPassword);
     }
 }

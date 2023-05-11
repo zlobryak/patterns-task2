@@ -1,17 +1,15 @@
 package ru.netology.testmode.data;
 
 import com.github.javafaker.Faker;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-
 import lombok.Value;
 
 import java.util.Locale;
 
-import static io.restassured.RestAssured.*;
+import static io.restassured.RestAssured.given;
 
 public class DataGenerator {
     private static final RequestSpecification requestSpec = new RequestSpecBuilder()
@@ -27,10 +25,6 @@ public class DataGenerator {
     }
 
     private static void sendRequest(RegistrationDto user) {
-        // TODO: отправить запрос на указанный в требованиях path,
-        //  передав в body запроса объект user
-        //  и не забудьте передать подготовленную спецификацию requestSpec.
-        //  Пример реализации метода показан в условии к задаче.
         given()
                 .spec(requestSpec)
                 .body(user)
@@ -38,6 +32,10 @@ public class DataGenerator {
                 .post("/api/system/users")
                 .then()
                 .statusCode(200);
+
+        //Will print used login and password to
+        // console for debug
+        DataToConsole.printToConsole("Зарегистрирован пользователь:" + user.getLogin() + " " + user.getPassword());
     }
 
     public static String getRandomLogin() {
@@ -78,11 +76,11 @@ public class DataGenerator {
                     (
                             getRandomLogin(),
                             getRandomPassword(
-                                    6,
-                                    16,
-                                    true,
-                                    true,
-                                    true
+                                    minLength,
+                                    maxLength,
+                                    includeUppercase,
+                                    includeSpecial,
+                                    includeDigit
                             ),
                             status
                     );
