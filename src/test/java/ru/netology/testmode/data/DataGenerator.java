@@ -31,7 +31,13 @@ public class DataGenerator {
         //  передав в body запроса объект user
         //  и не забудьте передать подготовленную спецификацию requestSpec.
         //  Пример реализации метода показан в условии к задаче.
-        given().spec(requestSpec).post("/api/system/users");
+        given()
+                .spec(requestSpec)
+                .body(user)
+                .when()
+                .post("/api/system/users")
+                .then()
+                .statusCode(200);
     }
 
     public static String getRandomLogin() {

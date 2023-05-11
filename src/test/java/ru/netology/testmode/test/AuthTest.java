@@ -1,16 +1,27 @@
 package ru.netology.testmode.test;
 
+import com.codeborne.selenide.Configuration;
+import com.diogonunes.jcolor.AnsiFormat;
+import com.diogonunes.jcolor.Attribute;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.Selenide.open;
+import static com.diogonunes.jcolor.Ansi.colorize;
+import static com.diogonunes.jcolor.Attribute.*;
 import static ru.netology.testmode.data.DataGenerator.Registration.getRegisteredUser;
 import static ru.netology.testmode.data.DataGenerator.Registration.getUser;
 import static ru.netology.testmode.data.DataGenerator.getRandomLogin;
 import static ru.netology.testmode.data.DataGenerator.getRandomPassword;
 
 class AuthTest {
+    AnsiFormat greenText = new AnsiFormat
+            (
+                    Attribute.GREEN_TEXT(),
+                    BLACK_BACK(),
+                    BOLD()
+            );
 
     @BeforeEach
     void setup() {
@@ -20,6 +31,7 @@ class AuthTest {
     @Test
     @DisplayName("Should successfully login with active registered user")
     void shouldSuccessfulLoginIfRegisteredActiveUser() {
+        Configuration.holdBrowserOpen = true;
         var registeredUser = getRegisteredUser
                 (
                         "active",
@@ -32,7 +44,11 @@ class AuthTest {
         // TODO: добавить логику теста, в рамках которого будет выполнена попытка входа в личный кабинет с учётными
         //  данными зарегистрированного активного пользователя, для заполнения полей формы используйте
         //  пользователя registeredUser
-
+        System.out.println(colorize("Used user parameters: "
+                + registeredUser.getLogin()
+                + " "
+                + registeredUser.getPassword(),
+                greenText));
     }
 
     @Test
@@ -70,13 +86,13 @@ class AuthTest {
     void shouldGetErrorIfWrongLogin() {
         var registeredUser = getRegisteredUser
                 (
-                "active",
-                6,
-                16,
-                true,
-                true,
-                true
-        );
+                        "active",
+                        6,
+                        16,
+                        true,
+                        true,
+                        true
+                );
         var wrongLogin = getRandomLogin();
         // TODO: добавить логику теста в рамках которого будет выполнена попытка
         //  входа в личный кабинет с неверным
