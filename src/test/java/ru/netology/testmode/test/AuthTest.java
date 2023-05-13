@@ -4,7 +4,6 @@ import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.netology.testmode.data.Login;
 
 import java.time.Duration;
 
@@ -16,6 +15,14 @@ import static ru.netology.testmode.data.DataGenerator.getRandomLogin;
 import static ru.netology.testmode.data.DataGenerator.getRandomPassword;
 
 class AuthTest {
+    public void login(String login,String password){
+            $("[data-test-id=login] input")
+                    .sendKeys(login);
+            $("[data-test-id=password] input")
+                    .sendKeys(password);
+            $("[data-test-id='action-login']")
+                    .click();
+    }
 
     @BeforeEach
     void setup() {
@@ -34,7 +41,7 @@ class AuthTest {
                         true,
                         true
                 );
-        Login.login(registeredUser, "fromUser", "fromUser");
+        login(registeredUser.getLogin(), registeredUser.getPassword());
         $("h2").shouldHave(Condition.text("Личный кабинет"), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
     }
@@ -50,7 +57,7 @@ class AuthTest {
                 true,
                 true,
                 true);
-        Login.login(notRegisteredUser, "fromUser", "fromUser");
+        login(notRegisteredUser.getLogin(), notRegisteredUser.getPassword());
         $("[data-test-id='error-notification']")
                 .shouldHave(Condition.text("Неверно указан логин или пароль"), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
@@ -69,7 +76,7 @@ class AuthTest {
                         true,
                         true
                 );
-        Login.login(blockedUser, "fromUser", "fromUser");
+        login(blockedUser.getLogin(), blockedUser.getPassword());
         $("[data-test-id='error-notification']")
                 .shouldHave(Condition.text("Пользователь заблокирован"), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
@@ -89,7 +96,7 @@ class AuthTest {
                         true
                 );
         String wrongLogin = getRandomLogin();
-        Login.login(registeredUser, wrongLogin, "fromUser");
+        login(wrongLogin, registeredUser.getPassword());
         $("[data-test-id='error-notification']")
                 .shouldHave(Condition.text("Неверно указан логин или пароль"), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
@@ -113,7 +120,7 @@ class AuthTest {
                 true,
                 true,
                 true);
-        Login.login(registeredUser, "fromUser", wrongPassword);
+        login(registeredUser.getLogin(), wrongPassword);
         $("[data-test-id='error-notification']")
                 .shouldHave(Condition.text("Неверно указан логин или пароль"), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);

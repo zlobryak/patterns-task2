@@ -32,10 +32,6 @@ public class DataGenerator {
                 .post("/api/system/users")
                 .then()
                 .statusCode(200);
-
-        //Will print used login and password to
-        // console for debug
-        DataToConsole.printToConsole("Зарегистрирован пользователь:" + user.getLogin() + " " + user.getPassword());
     }
 
     public static String getRandomLogin() {
